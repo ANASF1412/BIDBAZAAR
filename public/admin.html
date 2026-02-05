@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bid Bazaar - Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>🛠️ BID BAZAAR - ADMIN PANEL</h1>
+            <button id="endEventBtn" class="end-event-btn">END EVENT</button>
+        </header>
+
+        <div class="admin-content">
+            <!-- Live Auction Dashboard -->
+            <section class="dashboard-section">
+                <h2>📊 Live Auction Dashboard</h2>
+                <div class="auction-dashboard">
+                    <div id="noDashboard" class="no-auction">
+                        <p>No active auction</p>
+                    </div>
+                    
+                    <div id="activeDashboard" class="active-dashboard hidden">
+                        <div class="dashboard-product">
+                            <img id="dashProductImage" src="" alt="Product" class="dash-product-image">
+                            <div class="dash-product-info">
+                                <h3 id="dashProductName">Product Name</h3>
+                                <div class="dash-price-info">
+                                    <div class="dash-money-price">
+                                        Money Price: ₹<span id="dashMoneyPrice">0</span>
+                                    </div>
+                                    <div class="dash-point-value">
+                                        Point Value: <span id="dashPointValue">0</span> points
+                                    </div>
+                                </div>
+                                <div class="dash-status">
+                                    🎤 LIVE AUCTION (OFFLINE)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pre-Auction Showcase Controls -->
+            <section class="showcase-section">
+                <h2>🛍️ Pre-Auction Showcase Controls</h2>
+                <div class="showcase-controls">
+                    <div class="showcase-form">
+                        <select id="showcaseDuration">
+                            <option value="120">2 minutes</option>
+                            <option value="180">3 minutes</option>
+                            <option value="240">4 minutes</option>
+                            <option value="300">5 minutes</option>
+                        </select>
+                        <button id="startShowcaseBtn">START SHOWCASE</button>
+                    </div>
+                    <div id="showcaseStatus" class="showcase-status">
+                        <span id="showcaseTimer">Not active</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="admin-panels">
+                <!-- Team Management -->
+                <section class="admin-panel">
+                    <h2>👥 Team Management</h2>
+                    
+                    <div class="add-team-form">
+                        <input type="text" id="newTeamName" placeholder="Team Name" maxlength="50">
+                        <button id="addTeamBtn">ADD TEAM</button>
+                    </div>
+                    
+                    <div id="teamsList" class="teams-list">
+                        <!-- Teams will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Product Management -->
+                <section class="admin-panel">
+                    <h2>📦 Product Management</h2>
+                    
+                    <div class="add-product-form">
+                        <input type="text" id="productName" placeholder="Product Name" maxlength="100">
+                        <textarea id="productDescription" placeholder="Product Description" maxlength="500"></textarea>
+                        <input type="number" id="productBaseMoneyPrice" placeholder="Base Money Price (₹)" min="1">
+                        <input type="number" id="productPointValue" placeholder="Point Value" min="1">
+                        
+                        <div class="product-options">
+                            <select id="productType">
+                                <option value="normal">Normal Product</option>
+                                <option value="mystery">Mystery Product</option>
+                                <option value="mystery-card">Mystery Card 🎴</option>
+                            </select>
+                            
+                            <label class="mystery-checkbox">
+                                <input type="checkbox" id="isMystery"> Hide details in showcase
+                            </label>
+                        </div>
+                        
+                        <input type="file" id="productImage" accept="image/*">
+                        <button id="addProductBtn">ADD PRODUCT</button>
+                    </div>
+                    
+                    <div id="productsList" class="products-list">
+                        <!-- Products will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Auction Control -->
+                <section class="admin-panel">
+                    <h2>⚡ Auction Control</h2>
+                    
+                    <div id="auctionControls" class="auction-controls">
+                        <select id="productSelect">
+                            <option value="">Select Product for Current Auction</option>
+                        </select>
+                        
+                        <div class="auction-actions">
+                            <button id="setCurrentBtn">SET AS CURRENT PRODUCT</button>
+                        </div>
+                        
+                        <div class="sold-section">
+                            <h4>Mark Product as Sold:</h4>
+                            <select id="winnerTeamSelect">
+                                <option value="">Select Winning Team</option>
+                            </select>
+                            <button id="markSoldBtn">MARK AS SOLD</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Steal Power Control -->
+                <section class="admin-panel">
+                    <h2>🎴 Use Steal Power</h2>
+                    
+                    <div class="steal-power-form">
+                        <select id="stealingTeamSelect">
+                            <option value="">Select Team with Steal Card</option>
+                        </select>
+                        
+                        <select id="stealTargetSelect">
+                            <option value="">Select Target Team</option>
+                        </select>
+                        
+                        <input type="number" id="stealPoints" placeholder="Points to Steal" min="1">
+                        
+                        <button id="executeStealBtn">EXECUTE STEAL</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Team Leaderboard -->
+            <section class="leaderboard-section">
+                <h2>🏆 Live Team Rankings</h2>
+                <div id="adminTeamsList" class="admin-teams-list">
+                    <!-- Teams leaderboard will be populated here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Event End Modal -->
+        <div id="eventEndModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>🎉 Event Results</h2>
+                <div id="eventResults">
+                    <!-- Results will be populated here -->
+                </div>
+                <button id="closeModalBtn">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

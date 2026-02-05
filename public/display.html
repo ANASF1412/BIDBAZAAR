@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bid Bazaar - Live Display</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .display-container {
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        .display-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .display-header h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .display-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .showcase-display {
+            grid-column: 1 / -1;
+        }
+        
+        .showcase-timer-big {
+            text-align: center;
+            font-size: 3rem;
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .showcase-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .showcase-product-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            text-align: center;
+        }
+        
+        .showcase-product-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .showcase-product-info h3 {
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .showcase-product-info p {
+            color: #cccccc;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .showcase-product-prices {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .showcase-money-price {
+            color: #cccccc;
+            font-size: 1.2rem;
+        }
+        
+        .showcase-point-value {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+        
+        .leaderboard-display {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            margin-top: 30px;
+        }
+        
+        .leaderboard-display h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .teams-leaderboard {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .team-display-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .team-rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            min-width: 50px;
+        }
+        
+        .team-info {
+            flex: 1;
+        }
+        
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .team-points {
+            color: #4ecdc4;
+            font-size: 1.1rem;
+        }
+        
+        .steal-cards {
+            color: #ffd700;
+            font-size: 0.9rem;
+            margin-top: 3px;
+        }
+        
+        .game-alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 1000;
+            border: 3px solid #ffd700;
+            animation: alertPulse 0.5s ease-out;
+        }
+        
+        .game-alert h2 {
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+        
+        .mystery-reveal {
+            border-color: #ff6b6b;
+        }
+        
+        .steal-power {
+            border-color: #4ecdc4;
+        }
+        
+        .points-stolen {
+            border-color: #ffd700;
+        }
+        
+        @keyframes alertPulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .current-auction {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .no-current {
+            text-align: center;
+            padding: 60px;
+            color: #cccccc;
+        }
+        
+        .current-product {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .current-image {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            border: 3px solid rgba(255, 215, 0, 0.5);
+        }
+        
+        .current-info h2 {
+            color: #ffd700;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .current-info p {
+            color: #cccccc;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .price-display {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .money-price {
+            font-size: 1.8rem;
+            color: #cccccc;
+        }
+        
+        .point-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .auction-status {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.3rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .products-grid {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .products-grid h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .product-card-small {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .product-card-small.sold {
+            border-color: #4caf50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        .product-card-small.current {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+            animation: glow 2s infinite;
+        }
+        
+        .small-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .small-info h4 {
+            color: #ffd700;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        
+        .small-prices {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            font-size: 0.9rem;
+        }
+        
+        .small-money {
+            color: #cccccc;
+        }
+        
+        .small-points {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .product-status-small {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+        
+        .status-pending { background: #666; color: white; }
+        .status-current { background: #ffd700; color: #1a1a2e; }
+        .status-sold { background: #4caf50; color: white; }
+        
+        .winner-info {
+            color: #4ecdc4;
+            font-size: 0.8rem;
+            margin-top: 3px;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @media (max-width: 1200px) {
+            .display-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .current-product {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .current-image {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="display-container">
+        <header class="display-header">
+            <h1>🏆 BID BAZAAR - LIVE AUCTION</h1>
+            <p style="color: #cccccc; font-size: 1.2rem;">Sri Eshwar College of Engineering</p>
+        </header>
+
+        <div class="display-content">
+            <div id="normalDisplay">
+                <div class="current-auction">
+                    <div id="noCurrentAuction" class="no-current">
+                        <h2>🕐 Waiting for Next Product</h2>
+                        <p>The auction will begin shortly...</p>
+                    </div>
+                    
+                    <div id="currentAuction" class="current-product hidden">
+                        <img id="currentImage" src="" alt="Current Product" class="current-image">
+                        <div class="current-info">
+                            <h2 id="currentName">Product Name</h2>
+                            <p id="currentDescription">Product description will appear here</p>
+                            <div class="price-display">
+                                <div class="money-price">
+                                    Base Money Price: ₹<span id="currentMoneyPrice">0</span>
+                                </div>
+                                <div class="point-value">
+                                    Point Value: <span id="currentPointValue">0</span> Points
+                                </div>
+                            </div>
+                            <div class="auction-status">
+                                🎤 LIVE AUCTION IN PROGRESS
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="products-grid">
+                    <h3>📦 All Products</h3>
+                    <div id="allProducts" class="product-grid">
+                        <!-- Products will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="leaderboard-display">
+                    <h3>🏆 Team Rankings</h3>
+                    <div id="teamsLeaderboard" class="teams-leaderboard">
+                        <!-- Teams will be populated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div id="showcaseDisplay" class="showcase-display hidden">
+                <div class="showcase-timer-big">
+                    Auction starts in: <span id="showcaseTimerBig">00:00</span>
+                </div>
+                <div class="showcase-products-grid" id="showcaseProductsGrid">
+                    <!-- Showcase products will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Socket.IO connection
+        const socket = io();
+
+        // DOM elements
+        const noCurrentAuction = document.getElementById('noCurrentAuction');
+        const currentAuction = document.getElementById('currentAuction');
+        const currentImage = document.getElementById('currentImage');
+        const currentName = document.getElementById('currentName');
+        const currentDescription = document.getElementById('currentDescription');
+        const currentMoneyPrice = document.getElementById('currentMoneyPrice');
+        const currentPointValue = document.getElementById('currentPointValue');
+        const allProducts = document.getElementById('allProducts');
+        const teamsLeaderboard = document.getElementById('teamsLeaderboard');
+        
+        const normalDisplay = document.getElementById('normalDisplay');
+        const showcaseDisplay = document.getElementById('showcaseDisplay');
+        const showcaseTimerBig = document.getElementById('showcaseTimerBig');
+        const showcaseProductsGrid = document.getElementById('showcaseProductsGrid');
+
+        // Global state
+        let displayState = null;
+
+        // Socket event listeners
+        socket.on('displayUpdate', (state) => {
+            displayState = state;
+            updateDisplay();
+            updateTeamsDisplay(state.teams);
+        });
+
+        socket.on('teamsUpdate', (teams) => {
+            updateTeamsDisplay(teams);
+        });
+
+        socket.on('showcaseStarted', (state) => {
+            showShowcase(state);
+        });
+
+        socket.on('showcaseTimerUpdate', (timer) => {
+            updateShowcaseTimer(timer);
+        });
+
+        socket.on('showcaseEnded', () => {
+            hideShowcase();
+        });
+
+        socket.on('mysteryRevealed', (data) => {
+            showMysteryReveal(data);
+        });
+
+        socket.on('stealPowerAwarded', (data) => {
+            showStealPowerAlert(data);
+        });
+
+        socket.on('pointsStolen', (data) => {
+            showPointsStolen(data);
+        });
+
+        // Functions
+        function updateDisplay() {
+            if (!displayState) return;
+
+            // Update current product
+            if (displayState.currentProduct) {
+                noCurrentAuction.classList.add('hidden');
+                currentAuction.classList.remove('hidden');
+
+                const product = displayState.currentProduct;
+                currentImage.src = product.imageUrl;
+                currentName.textContent = product.name;
+                currentDescription.textContent = product.description;
+                currentMoneyPrice.textContent = product.baseMoneyPrice;
+                currentPointValue.textContent = product.pointValue;
+            } else {
+                noCurrentAuction.classList.remove('hidden');
+                currentAuction.classList.add('hidden');
+            }
+
+            // Update all products
+            updateAllProducts();
+        }
+
+        function updateAllProducts() {
+            if (!displayState || !displayState.allProducts) return;
+
+            allProducts.innerHTML = '';
+
+            displayState.allProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = `product-card-small ${product.status}`;
+
+                productCard.innerHTML = `
+                    <img src="${product.imageUrl}" alt="${product.name}" class="small-image">
+                    <div class="small-info">
+                        <h4>${product.name}</h4>
+                        <div class="small-prices">
+                            <div class="small-money">₹${product.baseMoneyPrice}</div>
+                            <div class="small-points">${product.pointValue} points</div>
+                        </div>
+                        <span class="product-status-small status-${product.status}">
+                            ${product.status.toUpperCase()}
+                        </span>
+                        ${product.status === 'sold' ? `<div class="winner-info">Winner: ${product.winnerTeam}</div>` : ''}
+                    </div>
+                `;
+
+                allProducts.appendChild(productCard);
+            });
+        }
+
+        // Load initial state
+        fetch('/api/display/state')
+            .then(response => response.json())
+            .then(state => {
+                displayState = state;
+                updateDisplay();
+                updateTeamsDisplay(state.teams);
+            })
+            .catch(error => console.error('Error loading display state:', error));
+            
+        // Showcase functions
+        function showShowcase(state) {
+            normalDisplay.style.display = 'none';
+            showcaseDisplay.classList.remove('hidden');
+            
+            updateShowcaseTimer(state.timer);
+            loadShowcaseProductsDisplay();
+        }
+        
+        function hideShowcase() {
+            showcaseDisplay.classList.add('hidden');
+            normalDisplay.style.display = 'grid';
+        }
+        
+        function updateShowcaseTimer(timer) {
+            const minutes = Math.floor(timer / 60);
+            const seconds = timer % 60;
+            showcaseTimerBig.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function loadShowcaseProductsDisplay() {
+            if (!displayState || !displayState.allProducts) return;
+            
+            showcaseProductsGrid.innerHTML = '';
+            
+            displayState.allProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'showcase-product-card';
+                
+                // Show mystery box for mystery products
+                const showMystery = product.isMystery || product.productType === 'mystery';
+                const displayName = showMystery ? 'Mystery Item 🎁' : product.name;
+                const displayDesc = showMystery ? 'This could be amazing… or absolutely nothing.' : product.description;
+                const displayImage = showMystery ? '/uploads/mystery-box.jpg' : product.imageUrl;
+                
+                if (product.productType === 'mystery-card') {
+                    card.innerHTML = `
+                        <img src="${displayImage}" alt="Mystery Card" class="showcase-product-image">
+                        <div class="showcase-product-info">
+                            <h3>🎴 Mystery Card</h3>
+                            <p>Win this to steal points from other teams!</p>
+                            <div class="showcase-product-prices">
+                                <div class="showcase-money-price">₹${product.baseMoneyPrice}</div>
+                                <div class="showcase-point-value">${product.pointValue} points</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <img src="${displayImage}" alt="${displayName}" class="showcase-product-image">
+                        <div class="showcase-product-info">
+                            <h3>${displayName}</h3>
+                            <p>${displayDesc}</p>
+                            <div class="showcase-product-prices">
+                                <div class="showcase-money-price">₹${product.baseMoneyPrice}</div>
+                                <div class="showcase-point-value">${product.pointValue} points</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                showcaseProductsGrid.appendChild(card);
+            });
+        }
+        
+        function updateTeamsDisplay(teams) {
+            if (!teams) return;
+            
+            teamsLeaderboard.innerHTML = '';
+            
+            teams.forEach((team, index) => {
+                const teamItem = document.createElement('div');
+                teamItem.className = 'team-display-item';
+                
+                teamItem.innerHTML = `
+                    <div class="team-rank">#${index + 1}</div>
+                    <div class="team-info">
+                        <div class="team-name">${team.teamName}</div>
+                        <div class="team-points">${team.points} pts</div>
+                        ${team.stealCards > 0 ? `<div class="steal-cards">🎴 ${team.stealCards}</div>` : ''}
+                    </div>
+                `;
+                
+                teamsLeaderboard.appendChild(teamItem);
+            });
+        }
+        
+        function showMysteryReveal(data) {
+            const alert = document.createElement('div');
+            alert.className = 'game-alert mystery-reveal';
+            alert.innerHTML = `
+                <h2>🎁 MYSTERY REVEALED!</h2>
+                <p><strong>${data.product.name}</strong> won by <strong>${data.winnerTeam}</strong></p>
+            `;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        function showStealPowerAlert(data) {
+            const alert = document.createElement('div');
+            alert.className = 'game-alert steal-power';
+            alert.innerHTML = `
+                <h2>🎴 MYSTERY CARD WON!</h2>
+                <p><strong>${data.teamName}</strong> has earned the power to steal points!</p>
+            `;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        function showPointsStolen(data) {
+            const alert = document.createElement('div');
+            alert.className = 'game-alert points-stolen';
+            alert.innerHTML = `
+                <h2>⚡ POINTS STOLEN!</h2>
+                <p><strong>${data.stealingTeam}</strong> stole <strong>${data.pointsStolen}</strong> points from <strong>${data.targetTeam}</strong>!</p>
+            `;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => alert.remove(), 5000);
+        }
+    </script>
+</body>
+</html>

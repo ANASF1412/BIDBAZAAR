@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bid Bazaar - Participant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Team Login -->
+        <div id="loginScreen" class="screen">
+            <div class="login-card">
+                <h1>🏆 BID BAZAAR</h1>
+                <p>Enter your team name to join the auction</p>
+                <input type="text" id="teamNameInput" placeholder="Team Name" maxlength="50">
+                <button id="joinBtn">JOIN AUCTION</button>
+                <div id="loginError" class="error"></div>
+            </div>
+        </div>
+
+        <!-- Main Scoreboard Interface -->
+        <div id="scoreboardScreen" class="screen">
+            <header class="header">
+                <div class="team-info">
+                    <h2 id="teamName">Team Name</h2>
+                    <div class="points">
+                        <span id="teamPoints">0</span> Points Earned
+                    </div>
+                </div>
+                <div class="auction-status">
+                    <div id="status" class="status">Physical Auction in Progress</div>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="product-section">
+                    <div id="noCurrentProduct" class="no-auction">
+                        <h3>🕐 Waiting for next product...</h3>
+                        <p>The admin will set the current product for auction.</p>
+                    </div>
+                    
+                    <div id="currentProduct" class="active-auction hidden">
+                        <div class="product-card">
+                            <img id="productImage" src="" alt="Product" class="product-image">
+                            <div class="product-info">
+                                <h3 id="productName">Product Name</h3>
+                                <p id="productDescription">Product description</p>
+                                <div class="price-info">
+                                    <div class="base-price">
+                                        Base Money Price: ₹<span id="baseMoneyPrice">0</span>
+                                    </div>
+                                    <div class="point-value">
+                                        Point Value: <span id="pointValue">0</span> points
+                                    </div>
+                                    <div class="auction-notice">
+                                        🎤 LIVE AUCTION (OFFLINE)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sold-products">
+                        <h3>📦 Recently Sold Products</h3>
+                        <div id="soldProductsList" class="sold-list">
+                            <!-- Sold products will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="leaderboard">
+                    <h3>🏆 Team Rankings</h3>
+                    <div id="teamsList" class="teams-list">
+                        <!-- Teams will be populated here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Showcase Screen -->
+        <div id="showcaseScreen" class="screen hidden">
+            <header class="showcase-header">
+                <h1>🛍️ Upcoming Auction Items</h1>
+                <div class="showcase-timer">
+                    Auction starts in: <span id="showcaseCountdown">00:00</span>
+                </div>
+            </header>
+            
+            <div class="showcase-grid" id="showcaseGrid">
+                <!-- Products will be populated here -->
+            </div>
+        </div>
+
+        <!-- Event Ended Screen -->
+        <div id="endScreen" class="screen hidden">
+            <div class="end-card">
+                <h1>🎉 EVENT ENDED</h1>
+                <div id="winnerInfo" class="winner-info">
+                    <!-- Winner info will be populated here -->
+                </div>
+                <div id="finalRankings" class="final-rankings">
+                    <!-- Final rankings will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

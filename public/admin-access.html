@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Access - Bid Bazaar</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        
+        .access-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .access-card h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .access-card p {
+            margin-bottom: 30px;
+            color: #cccccc;
+        }
+        
+        .access-card input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .access-card input::placeholder {
+            color: #cccccc;
+        }
+        
+        .access-card button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .access-card button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .error {
+            color: #ff6b6b;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="access-card">
+        <h1>🔐 Admin Access</h1>
+        <p>Enter admin password to access control panel</p>
+        <input type="password" id="adminPassword" placeholder="Admin Password">
+        <button onclick="checkAccess()">ACCESS ADMIN PANEL</button>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        const adminKey = 'admin123'; // Simple password - change as needed
+        
+        function checkAccess() {
+            const password = document.getElementById('adminPassword').value;
+            const error = document.getElementById('error');
+            
+            if (password === adminKey) {
+                window.location.href = '/admin-panel';
+            } else {
+                error.textContent = 'Invalid password';
+                setTimeout(() => error.textContent = '', 3000);
+            }
+        }
+        
+        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkAccess();
+        });
+    </script>
+</body>
+</html>
