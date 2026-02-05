@@ -7,245 +7,469 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
     color: #ffffff;
     min-height: 100vh;
-}
-
-.container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.screen {
-    width: 100%;
-    max-width: 1200px;
-    padding: 20px;
 }
 
 .hidden {
     display: none !important;
 }
 
-/* Login Screen */
-.login-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 40px;
-    text-align: center;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    max-width: 400px;
+/* Admin Container */
+.admin-container {
+    min-height: 100vh;
+    padding: 30px;
+    max-width: 1600px;
     margin: 0 auto;
 }
 
-.login-card h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.login-card p {
+.admin-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 25px 40px;
+    border-radius: 15px;
     margin-bottom: 30px;
-    color: #cccccc;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(78, 205, 196, 0.2);
 }
 
-.login-card input {
-    width: 100%;
-    padding: 15px;
+.admin-header h1 {
+    color: #4ecdc4;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.admin-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Preview Section */
+.preview-section {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+.preview-section h2 {
+    color: #4ecdc4;
     margin-bottom: 20px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    border-radius: 10px;
+    font-size: 1.5rem;
+}
+
+.preview-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.preview-controls select {
+    padding: 12px 20px;
     background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(78, 205, 196, 0.3);
+    border-radius: 8px;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
+    cursor: pointer;
 }
 
-.login-card input::placeholder {
-    color: #cccccc;
-}
-
-.login-card button {
-    width: 100%;
-    padding: 15px;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
-    color: #1a1a2e;
+.preview-controls button {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    color: white;
     border: none;
-    border-radius: 10px;
-    font-size: 16px;
+    border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.2s;
 }
 
-.login-card button:hover {
+.preview-controls button:hover {
     transform: translateY(-2px);
 }
 
-/* Header */
-.header {
+#previewStatus {
+    color: #4ecdc4;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Admin Panels Grid */
+.admin-panels {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.admin-panel {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+.admin-panel h2 {
+    color: #4ecdc4;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+    padding-bottom: 10px;
+}
+
+/* Forms */
+.add-team-form, .add-product-form {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.add-team-form input,
+.add-product-form input,
+.add-product-form textarea,
+.add-product-form select {
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(78, 205, 196, 0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.add-team-form input:focus,
+.add-product-form input:focus,
+.add-product-form textarea:focus,
+.add-product-form select:focus {
+    outline: none;
+    border-color: #4ecdc4;
+}
+
+.add-product-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.add-team-form button,
+.add-product-form button {
+    padding: 12px;
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.add-team-form button:hover,
+.add-product-form button:hover {
+    transform: translateY(-2px);
+}
+
+.product-options {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.product-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e0e0e0;
+    cursor: pointer;
+}
+
+/* Lists */
+.teams-list, .products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.teams-list::-webkit-scrollbar,
+.products-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.teams-list::-webkit-scrollbar-track,
+.products-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.teams-list::-webkit-scrollbar-thumb,
+.products-list::-webkit-scrollbar-thumb {
+    background: #4ecdc4;
+    border-radius: 10px;
+}
+
+.team-item-admin {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-}
-
-.team-info h2 {
-    color: #ffd700;
-    margin-bottom: 5px;
-}
-
-.points {
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-
-.timer {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #ff6b6b;
-    text-align: center;
-}
-
-.status {
-    color: #cccccc;
-    text-align: center;
-    margin-top: 5px;
-}
-
-/* Main Content */
-.main-content {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-}
-
-/* Product Section */
-.product-section {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-}
-
-.no-auction {
-    text-align: center;
-    padding: 40px;
-    color: #cccccc;
-}
-
-.product-card {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.product-image {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
+    border: 1px solid rgba(78, 205, 196, 0.2);
+    transition: background 0.3s;
 }
 
-.product-info h3 {
-    color: #ffd700;
-    font-size: 1.5rem;
-    margin-bottom: 10px;
+.team-item-admin:hover {
+    background: rgba(255, 255, 255, 0.12);
 }
 
-.product-info p {
-    color: #cccccc;
+.product-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    border: 1px solid rgba(78, 205, 196, 0.2);
+    transition: background 0.3s;
+}
+
+.product-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.product-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid rgba(78, 205, 196, 0.3);
+}
+
+.product-details {
+    flex: 1;
+}
+
+.product-details h4 {
+    color: #4ecdc4;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+
+.product-details p {
+    color: #b0b0b0;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.product-details div {
+    color: #e0e0e0;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+}
+
+.product-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.status-pending { background: #546e7a; color: white; }
+.status-current { background: #4ecdc4; color: white; }
+.status-sold { background: #66bb6a; color: white; }
+
+.delete-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.delete-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Auction Section */
+.auction-section {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+.auction-section h2 {
+    color: #4ecdc4;
     margin-bottom: 20px;
-    line-height: 1.5;
+    font-size: 1.5rem;
+    border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+    padding-bottom: 10px;
 }
 
-.price-info {
+.auction-controls {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
 }
 
-.base-price {
-    color: #cccccc;
-}
-
-.current-bid {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #ffd700;
-}
-
-.leading-team {
-    font-size: 0.9rem;
-    color: #4ecdc4;
-    margin-top: 5px;
-}
-
-/* Bidding Section */
-.bidding-section {
-    border-top: 1px solid rgba(255, 215, 0, 0.3);
-    padding-top: 20px;
-}
-
-.bid-input-group {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.bid-input-group input {
-    flex: 1;
-    padding: 15px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    border-radius: 10px;
+.auction-controls select {
+    padding: 12px 15px;
     background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(78, 205, 196, 0.3);
+    border-radius: 8px;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
 }
 
-.bid-input-group button {
-    padding: 15px 30px;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
-    color: #1a1a2e;
+.auction-controls button {
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.2s;
 }
 
-.bid-input-group button:hover {
+.auction-controls button:hover {
     transform: translateY(-2px);
 }
 
-/* Leaderboard */
-.leaderboard {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
+.sold-section {
     padding: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    border: 1px solid rgba(78, 205, 196, 0.2);
 }
 
-.leaderboard h3 {
-    color: #ffd700;
+.sold-section h4 {
+    color: #4ecdc4;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.sold-section select {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(78, 205, 196, 0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.sold-section button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.sold-section button:hover {
+    transform: translateY(-2px);
+}
+
+/* Mystery Section */
+.mystery-section {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+.mystery-section h2 {
+    color: #4ecdc4;
     margin-bottom: 20px;
-    text-align: center;
+    font-size: 1.5rem;
+    border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+    padding-bottom: 10px;
 }
 
-.teams-list {
+.mystery-controls {
+    display: grid;
+    gap: 12px;
+}
+
+.mystery-controls select,
+.mystery-controls input {
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(78, 205, 196, 0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+}
+
+.mystery-controls button {
+    padding: 12px;
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.mystery-controls button:hover {
+    transform: translateY(-2px);
+}
+
+/* Leaderboard Section */
+.leaderboard-section {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+.leaderboard-section h2 {
+    color: #4ecdc4;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+    padding-bottom: 10px;
+}
+
+.leaderboard-section button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: transform 0.2s;
+}
+
+.leaderboard-section button:hover {
+    transform: translateY(-2px);
+}
+
+.leaderboard-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -255,548 +479,57 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 10px;
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(78, 205, 196, 0.2);
 }
 
-.team-item.current-team {
-    border-color: #ffd700;
-    background: rgba(255, 215, 0, 0.1);
+.team-item:first-child {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    border-color: #f39c12;
 }
 
 .team-rank {
     font-weight: bold;
-    color: #ffd700;
-    margin-right: 10px;
+    color: #4ecdc4;
+    margin-right: 15px;
+    font-size: 1.1rem;
 }
 
 .team-name {
     flex: 1;
+    font-size: 1rem;
 }
 
 .team-points {
     font-weight: bold;
     color: #4ecdc4;
-}
-
-/* Error and Success Messages */
-.error {
-    color: #ff6b6b;
-    margin-top: 10px;
-    text-align: center;
-}
-
-.success {
-    color: #4ecdc4;
-    margin-top: 10px;
-    text-align: center;
-}
-
-/* Event End Screen */
-.end-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 40px;
-    text-align: center;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.end-card h1 {
-    font-size: 2.5rem;
-    margin-bottom: 30px;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.winner-info {
-    font-size: 1.5rem;
-    margin-bottom: 30px;
-    color: #ffd700;
-}
-
-/* Admin Styles */
-.admin-container {
-    min-height: 100vh;
-    padding: 20px;
-}
-
-.admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-}
-
-.admin-header h1 {
-    color: #ffd700;
-}
-
-.end-event-btn {
-    padding: 15px 30px;
-    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.end-event-btn:hover {
-    transform: translateY(-2px);
-}
-
-.admin-content {
-    display: grid;
-    gap: 20px;
-}
-
-.dashboard-section {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-}
-
-.dashboard-section h2 {
-    color: #ffd700;
-    margin-bottom: 20px;
-}
-
-.active-dashboard {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.dash-product-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
-}
-
-.dash-product-info h3 {
-    color: #ffd700;
-    margin-bottom: 10px;
-}
-
-.dash-price-info {
-    margin-bottom: 20px;
-}
-
-.dash-money-price {
     font-size: 1.1rem;
-    color: #cccccc;
-    margin-bottom: 5px;
 }
 
-.dash-point-value {
-    font-size: 1.3rem;
-    color: #ffd700;
-    font-weight: bold;
-}
-
-.dash-status {
-    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-weight: bold;
-    text-align: center;
-    animation: pulse 2s infinite;
-}
-
-.stop-btn {
-    padding: 10px 20px;
-    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.admin-panels {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 20px;
-}
-
-.admin-panel {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-}
-
-.admin-panel h2 {
-    color: #ffd700;
-    margin-bottom: 20px;
-}
-
-.add-team-form, .add-product-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.add-team-form input, .add-product-form input, .add-product-form textarea, .add-product-form select {
-    padding: 12px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    font-size: 14px;
-}
-
-.add-team-form button, .add-product-form button {
-    padding: 12px;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
-    color: #1a1a2e;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.team-item-admin {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 215, 0, 0.2);
-    margin-bottom: 10px;
-}
-
-.team-controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.team-controls input {
-    width: 80px;
-    padding: 5px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    border-radius: 5px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    text-align: center;
-}
-
-.team-controls button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.update-btn {
-    background: #4ecdc4;
-    color: white;
-}
-
-.delete-btn {
-    background: #ff6b6b;
-    color: white;
-}
-
-.product-item {
-    display: flex;
-    gap: 15px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 215, 0, 0.2);
-    margin-bottom: 10px;
-}
-
-.product-item img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.product-details {
-    flex: 1;
-}
-
-.product-details h4 {
-    color: #ffd700;
-    margin-bottom: 5px;
-}
-
-.product-status {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: bold;
-    margin-top: 5px;
-}
-
-.status-pending { background: #666; color: white; }
-.status-active { background: #4ecdc4; color: white; }
-.status-sold { background: #4caf50; color: white; }
-.status-unsold { background: #ff6b6b; color: white; }
-
-.auction-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.auction-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.sold-section {
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 215, 0, 0.2);
-}
-
-.sold-section h4 {
-    color: #ffd700;
-    margin-bottom: 15px;
-}
-
-.auction-actions select, .auction-actions input, .sold-section select {
-    padding: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.auction-actions button, .sold-section button {
-    padding: 10px 20px;
-    background: linear-gradient(45deg, #4ecdc4, #45b7b8);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.sold-section button {
-    background: linear-gradient(45deg, #4caf50, #45a049);
-    margin-left: 10px;
-}
-
-.leaderboard-section {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-}
-
-.leaderboard-section h2 {
-    color: #ffd700;
-    margin-bottom: 20px;
-}
-
-.admin-teams-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-}
-
-/* Modal */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 40px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    max-width: 600px;
-    width: 90%;
-    text-align: center;
-}
-
-.modal-content h2 {
-    color: #ffd700;
-    margin-bottom: 20px;
-}
-
-.modal-content button {
-    padding: 15px 30px;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
-    color: #1a1a2e;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .main-content {
-        grid-template-columns: 1fr;
-    }
-    
+/* Responsive */
+@media (max-width: 1200px) {
     .admin-panels {
         grid-template-columns: 1fr;
     }
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 15px;
+    }
     
-    .product-card {
+    .admin-header {
+        padding: 20px;
+    }
+    
+    .admin-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .preview-controls {
         flex-direction: column;
+        align-items: stretch;
     }
-    
-    .product-image {
-        width: 100%;
-        height: 200px;
-    }
-    
-    .auction-settings {
-        flex-direction: column;
-    }
-    
-    .admin-teams-list {
-        grid-template-columns: 1fr;
-    }
-}
-
-.showcase-section {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    margin-bottom: 20px;
-}
-
-.showcase-section h2 {
-    color: #ffd700;
-    margin-bottom: 20px;
-}
-
-.showcase-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.showcase-form {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.showcase-form select {
-    padding: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.showcase-form button {
-    padding: 10px 20px;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
-    color: #1a1a2e;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.showcase-status {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #4ecdc4;
-}
-
-.product-options {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    margin: 10px 0;
-}
-
-.mystery-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #cccccc;
-    cursor: pointer;
-}
-
-.product-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.edit-btn {
-    padding: 8px 15px;
-    background: linear-gradient(45deg, #4ecdc4, #45b7b8);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.steal-power-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.steal-power-form select, .steal-power-form input {
-    padding: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.steal-power-form button {
-    padding: 12px 20px;
-    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
 }

@@ -3,693 +3,484 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bid Bazaar - Live Display</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Bid Bazaar - Auction Display</title>
     <style>
-        .display-container {
-            min-height: 100vh;
-            padding: 20px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        .display-header {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1419 100%);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .display-stage {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            position: relative;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .status-live {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            animation: glow-live 2s infinite;
+        }
+        
+        .status-sold {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+        
+        .status-mystery {
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            animation: glow-mystery 3s infinite;
+        }
+        
+        @keyframes glow-live {
+            0%, 100% { box-shadow: 0 10px 40px rgba(0, 212, 255, 0.6); }
+            50% { box-shadow: 0 10px 60px rgba(0, 212, 255, 0.9); }
+        }
+        
+        @keyframes glow-mystery {
+            0%, 100% { box-shadow: 0 10px 40px rgba(168, 85, 247, 0.6); }
+            50% { box-shadow: 0 10px 60px rgba(168, 85, 247, 0.9); }
+        }
+        
+        /* Main Product Display */
+        .product-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1400px;
+            width: 100%;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: fadeInScale 0.8s forwards;
+        }
+        
+        @keyframes fadeInScale {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .product-image-container {
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .product-image {
+            width: 600px;
+            height: 600px;
+            object-fit: cover;
+            border-radius: 30px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.7);
+            border: 4px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .mystery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: #a855f7;
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
+        }
+        
+        .product-name {
+            font-size: 4.5rem;
+            font-weight: bold;
             text-align: center;
             margin-bottom: 30px;
-        }
-        
-        .display-header h1 {
-            font-size: 3rem;
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+            line-height: 1.2;
         }
         
-        .display-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .showcase-display {
-            grid-column: 1 / -1;
-        }
-        
-        .showcase-timer-big {
+        .product-description {
+            font-size: 1.8rem;
             text-align: center;
-            font-size: 3rem;
-            color: #ff6b6b;
-            font-weight: bold;
-            margin-bottom: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-        }
-        
-        .showcase-products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-        }
-        
-        .showcase-product-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-            text-align: center;
-        }
-        
-        .showcase-product-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .showcase-product-info h3 {
-            color: #ffd700;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-        
-        .showcase-product-info p {
-            color: #cccccc;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        
-        .showcase-product-prices {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .showcase-money-price {
-            color: #cccccc;
-            font-size: 1.2rem;
-        }
-        
-        .showcase-point-value {
-            color: #ffd700;
-            font-weight: bold;
-            font-size: 1.4rem;
-        }
-        
-        .leaderboard-display {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-            margin-top: 30px;
-        }
-        
-        .leaderboard-display h3 {
-            color: #ffd700;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .teams-leaderboard {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .team-display-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 215, 0, 0.2);
-        }
-        
-        .team-rank {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffd700;
-            min-width: 50px;
-        }
-        
-        .team-info {
-            flex: 1;
-        }
-        
-        .team-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: white;
-            margin-bottom: 5px;
-        }
-        
-        .team-points {
-            color: #4ecdc4;
-            font-size: 1.1rem;
-        }
-        
-        .steal-cards {
-            color: #ffd700;
-            font-size: 0.9rem;
-            margin-top: 3px;
-        }
-        
-        .game-alert {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            z-index: 1000;
-            border: 3px solid #ffd700;
-            animation: alertPulse 0.5s ease-out;
-        }
-        
-        .game-alert h2 {
-            margin-bottom: 15px;
-            font-size: 2rem;
-        }
-        
-        .mystery-reveal {
-            border-color: #ff6b6b;
-        }
-        
-        .steal-power {
-            border-color: #4ecdc4;
-        }
-        
-        .points-stolen {
-            border-color: #ffd700;
-        }
-        
-        @keyframes alertPulse {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-        
-        .current-auction {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-        }
-        
-        .no-current {
-            text-align: center;
-            padding: 60px;
-            color: #cccccc;
-        }
-        
-        .current-product {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-        
-        .current-image {
-            width: 300px;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 15px;
-            border: 3px solid rgba(255, 215, 0, 0.5);
-        }
-        
-        .current-info h2 {
-            color: #ffd700;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-        
-        .current-info p {
-            color: #cccccc;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
+            color: #b0b0b0;
+            margin-bottom: 50px;
+            max-width: 900px;
             line-height: 1.6;
         }
         
-        .price-display {
+        .product-pricing {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            gap: 80px;
+            align-items: center;
         }
         
-        .money-price {
-            font-size: 1.8rem;
-            color: #cccccc;
-        }
-        
-        .point-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #ffd700;
-        }
-        
-        .auction-status {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-weight: bold;
+        .price-box {
             text-align: center;
-            margin-top: 20px;
-            font-size: 1.3rem;
-            animation: pulse 2s infinite;
-        }
-        
-        .products-grid {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .products-grid h3 {
-            color: #ffd700;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.5rem;
-        }
-        
-        .product-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-        
-        .product-card-small {
-            display: flex;
-            gap: 15px;
-            padding: 15px;
+            padding: 30px 60px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
         
-        .product-card-small.sold {
-            border-color: #4caf50;
-            background: rgba(76, 175, 80, 0.1);
+        .price-label {
+            font-size: 1.3rem;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
-        .product-card-small.current {
-            border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.1);
-            animation: glow 2s infinite;
+        .price-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00d4ff;
         }
         
-        .small-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
+        .points-value {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
         }
         
-        .small-info h4 {
-            color: #ffd700;
-            margin-bottom: 5px;
-            font-size: 1rem;
-        }
-        
-        .small-prices {
-            display: flex;
+        /* Sold Announcement */
+        .sold-announcement {
+            display: none;
             flex-direction: column;
-            gap: 3px;
-            font-size: 0.9rem;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            height: 100%;
         }
         
-        .small-money {
-            color: #cccccc;
+        .sold-announcement.active {
+            display: flex;
+            animation: zoomIn 0.6s;
         }
         
-        .small-points {
-            color: #ffd700;
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .sold-banner {
+            font-size: 6rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 50px;
+            text-shadow: 0 0 50px rgba(255, 107, 107, 0.8);
+        }
+        
+        .sold-to-label {
+            font-size: 2.5rem;
+            color: #888;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        .sold-team-name {
+            font-size: 5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 40px;
+        }
+        
+        .sold-points {
+            font-size: 4rem;
+            color: #00d4ff;
             font-weight: bold;
         }
         
-        .product-status-small {
-            font-size: 0.8rem;
-            padding: 3px 8px;
+        /* Preview Mode */
+        .preview-mode {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            padding: 40px;
+        }
+        
+        .preview-mode.active {
+            display: flex;
+        }
+        
+        .preview-timer {
+            font-size: 3rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .preview-grid::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .preview-grid::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .preview-grid::-webkit-scrollbar-thumb {
+            background: #00d4ff;
             border-radius: 10px;
-            margin-top: 5px;
         }
         
-        .status-pending { background: #666; color: white; }
-        .status-current { background: #ffd700; color: #1a1a2e; }
-        .status-sold { background: #4caf50; color: white; }
-        
-        .winner-info {
-            color: #4ecdc4;
-            font-size: 0.8rem;
-            margin-top: 3px;
+        .preview-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
         }
         
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
+        .preview-card:hover {
+            transform: translateY(-10px);
+            border-color: #00d4ff;
         }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .preview-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
         
-        @media (max-width: 1200px) {
-            .display-content {
-                grid-template-columns: 1fr;
+        .preview-card.mystery img {
+            filter: blur(15px) brightness(0.4);
+        }
+        
+        .preview-card h3 {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+        
+        .preview-card.mystery h3 {
+            color: #a855f7;
+        }
+        
+        .preview-price {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        
+        .preview-points {
+            font-size: 1.6rem;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+        
+        /* Leaderboard Mode */
+        .leaderboard-mode {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+        }
+        
+        .leaderboard-mode.active {
+            display: flex;
+        }
+        
+        .leaderboard-title {
+            font-size: 4.5rem;
+            color: #ffd700;
+            margin-bottom: 60px;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+        }
+        
+        .leaderboard-list {
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 50px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            font-size: 2.2rem;
+            transition: transform 0.3s;
+        }
+        
+        .leaderboard-item:hover {
+            transform: translateX(20px);
+        }
+        
+        .leaderboard-item:first-child {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #0a0e27;
+            font-size: 2.8rem;
+            border: none;
+            box-shadow: 0 10px 50px rgba(255, 215, 0, 0.5);
+        }
+        
+        .leaderboard-rank {
+            font-weight: bold;
+            margin-right: 30px;
+            color: #00d4ff;
+        }
+        
+        .leaderboard-item:first-child .leaderboard-rank {
+            color: #0a0e27;
+        }
+        
+        .leaderboard-name {
+            flex: 1;
+        }
+        
+        .leaderboard-points {
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .leaderboard-item:first-child .leaderboard-points {
+            color: #0a0e27;
+        }
+        
+        /* Hidden State */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .product-image {
+                width: 500px;
+                height: 500px;
             }
-            
-            .current-product {
-                flex-direction: column;
-                text-align: center;
+            .product-name {
+                font-size: 3.5rem;
             }
-            
-            .current-image {
-                width: 250px;
-                height: 250px;
+        }
+        
+        @media (max-width: 1024px) {
+            .product-image {
+                width: 400px;
+                height: 400px;
+            }
+            .product-name {
+                font-size: 3rem;
+            }
+            .product-pricing {
+                gap: 40px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="display-container">
-        <header class="display-header">
-            <h1>🏆 BID BAZAAR - LIVE AUCTION</h1>
-            <p style="color: #cccccc; font-size: 1.2rem;">Sri Eshwar College of Engineering</p>
-        </header>
-
-        <div class="display-content">
-            <div id="normalDisplay">
-                <div class="current-auction">
-                    <div id="noCurrentAuction" class="no-current">
-                        <h2>🕐 Waiting for Next Product</h2>
-                        <p>The auction will begin shortly...</p>
-                    </div>
-                    
-                    <div id="currentAuction" class="current-product hidden">
-                        <img id="currentImage" src="" alt="Current Product" class="current-image">
-                        <div class="current-info">
-                            <h2 id="currentName">Product Name</h2>
-                            <p id="currentDescription">Product description will appear here</p>
-                            <div class="price-display">
-                                <div class="money-price">
-                                    Base Money Price: ₹<span id="currentMoneyPrice">0</span>
-                                </div>
-                                <div class="point-value">
-                                    Point Value: <span id="currentPointValue">0</span> Points
-                                </div>
-                            </div>
-                            <div class="auction-status">
-                                🎤 LIVE AUCTION IN PROGRESS
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="products-grid">
-                    <h3>📦 All Products</h3>
-                    <div id="allProducts" class="product-grid">
-                        <!-- Products will be populated here -->
-                    </div>
-                </div>
-                
-                <div class="leaderboard-display">
-                    <h3>🏆 Team Rankings</h3>
-                    <div id="teamsLeaderboard" class="teams-leaderboard">
-                        <!-- Teams will be populated here -->
-                    </div>
-                </div>
+    <div class="display-stage">
+        <!-- Status Badge -->
+        <div id="statusBadge" class="status-badge hidden"></div>
+        
+        <!-- Live Product Display -->
+        <div id="productStage" class="product-stage hidden">
+            <div class="product-image-container">
+                <img id="productImage" class="product-image" src="" alt="">
+                <div id="mysteryOverlay" class="mystery-overlay hidden">???</div>
             </div>
             
-            <div id="showcaseDisplay" class="showcase-display hidden">
-                <div class="showcase-timer-big">
-                    Auction starts in: <span id="showcaseTimerBig">00:00</span>
+            <h1 id="productName" class="product-name"></h1>
+            <p id="productDescription" class="product-description"></p>
+            
+            <div class="product-pricing">
+                <div class="price-box">
+                    <div class="price-label">Base Price</div>
+                    <div class="price-value">₹<span id="productPrice">0</span></div>
                 </div>
-                <div class="showcase-products-grid" id="showcaseProductsGrid">
-                    <!-- Showcase products will be populated here -->
+                <div class="price-box">
+                    <div class="price-label">Points</div>
+                    <div class="points-value" id="productPoints">0</div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Sold Announcement -->
+        <div id="soldAnnouncement" class="sold-announcement">
+            <div class="sold-banner">✅ SOLD!</div>
+            <div class="sold-to-label">Sold To</div>
+            <div class="sold-team-name" id="soldTeamName"></div>
+            <div class="sold-points" id="soldPoints"></div>
+        </div>
+        
+        <!-- Preview Mode -->
+        <div id="previewMode" class="preview-mode">
+            <div class="preview-timer" id="previewTimer"></div>
+            <div class="preview-grid" id="previewGrid"></div>
+        </div>
+        
+        <!-- Leaderboard Mode -->
+        <div id="leaderboardMode" class="leaderboard-mode">
+            <div class="leaderboard-title">🏆 TEAM RANKINGS 🏆</div>
+            <div class="leaderboard-list" id="leaderboardList"></div>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        // Socket.IO connection
-        const socket = io();
-
-        // DOM elements
-        const noCurrentAuction = document.getElementById('noCurrentAuction');
-        const currentAuction = document.getElementById('currentAuction');
-        const currentImage = document.getElementById('currentImage');
-        const currentName = document.getElementById('currentName');
-        const currentDescription = document.getElementById('currentDescription');
-        const currentMoneyPrice = document.getElementById('currentMoneyPrice');
-        const currentPointValue = document.getElementById('currentPointValue');
-        const allProducts = document.getElementById('allProducts');
-        const teamsLeaderboard = document.getElementById('teamsLeaderboard');
-        
-        const normalDisplay = document.getElementById('normalDisplay');
-        const showcaseDisplay = document.getElementById('showcaseDisplay');
-        const showcaseTimerBig = document.getElementById('showcaseTimerBig');
-        const showcaseProductsGrid = document.getElementById('showcaseProductsGrid');
-
-        // Global state
-        let displayState = null;
-
-        // Socket event listeners
-        socket.on('displayUpdate', (state) => {
-            displayState = state;
-            updateDisplay();
-            updateTeamsDisplay(state.teams);
-        });
-
-        socket.on('teamsUpdate', (teams) => {
-            updateTeamsDisplay(teams);
-        });
-
-        socket.on('showcaseStarted', (state) => {
-            showShowcase(state);
-        });
-
-        socket.on('showcaseTimerUpdate', (timer) => {
-            updateShowcaseTimer(timer);
-        });
-
-        socket.on('showcaseEnded', () => {
-            hideShowcase();
-        });
-
-        socket.on('mysteryRevealed', (data) => {
-            showMysteryReveal(data);
-        });
-
-        socket.on('stealPowerAwarded', (data) => {
-            showStealPowerAlert(data);
-        });
-
-        socket.on('pointsStolen', (data) => {
-            showPointsStolen(data);
-        });
-
-        // Functions
-        function updateDisplay() {
-            if (!displayState) return;
-
-            // Update current product
-            if (displayState.currentProduct) {
-                noCurrentAuction.classList.add('hidden');
-                currentAuction.classList.remove('hidden');
-
-                const product = displayState.currentProduct;
-                currentImage.src = product.imageUrl;
-                currentName.textContent = product.name;
-                currentDescription.textContent = product.description;
-                currentMoneyPrice.textContent = product.baseMoneyPrice;
-                currentPointValue.textContent = product.pointValue;
-            } else {
-                noCurrentAuction.classList.remove('hidden');
-                currentAuction.classList.add('hidden');
-            }
-
-            // Update all products
-            updateAllProducts();
-        }
-
-        function updateAllProducts() {
-            if (!displayState || !displayState.allProducts) return;
-
-            allProducts.innerHTML = '';
-
-            displayState.allProducts.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = `product-card-small ${product.status}`;
-
-                productCard.innerHTML = `
-                    <img src="${product.imageUrl}" alt="${product.name}" class="small-image">
-                    <div class="small-info">
-                        <h4>${product.name}</h4>
-                        <div class="small-prices">
-                            <div class="small-money">₹${product.baseMoneyPrice}</div>
-                            <div class="small-points">${product.pointValue} points</div>
-                        </div>
-                        <span class="product-status-small status-${product.status}">
-                            ${product.status.toUpperCase()}
-                        </span>
-                        ${product.status === 'sold' ? `<div class="winner-info">Winner: ${product.winnerTeam}</div>` : ''}
-                    </div>
-                `;
-
-                allProducts.appendChild(productCard);
-            });
-        }
-
-        // Load initial state
-        fetch('/api/display/state')
-            .then(response => response.json())
-            .then(state => {
-                displayState = state;
-                updateDisplay();
-                updateTeamsDisplay(state.teams);
-            })
-            .catch(error => console.error('Error loading display state:', error));
-            
-        // Showcase functions
-        function showShowcase(state) {
-            normalDisplay.style.display = 'none';
-            showcaseDisplay.classList.remove('hidden');
-            
-            updateShowcaseTimer(state.timer);
-            loadShowcaseProductsDisplay();
-        }
-        
-        function hideShowcase() {
-            showcaseDisplay.classList.add('hidden');
-            normalDisplay.style.display = 'grid';
-        }
-        
-        function updateShowcaseTimer(timer) {
-            const minutes = Math.floor(timer / 60);
-            const seconds = timer % 60;
-            showcaseTimerBig.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-        
-        function loadShowcaseProductsDisplay() {
-            if (!displayState || !displayState.allProducts) return;
-            
-            showcaseProductsGrid.innerHTML = '';
-            
-            displayState.allProducts.forEach(product => {
-                const card = document.createElement('div');
-                card.className = 'showcase-product-card';
-                
-                // Show mystery box for mystery products
-                const showMystery = product.isMystery || product.productType === 'mystery';
-                const displayName = showMystery ? 'Mystery Item 🎁' : product.name;
-                const displayDesc = showMystery ? 'This could be amazing… or absolutely nothing.' : product.description;
-                const displayImage = showMystery ? '/uploads/mystery-box.jpg' : product.imageUrl;
-                
-                if (product.productType === 'mystery-card') {
-                    card.innerHTML = `
-                        <img src="${displayImage}" alt="Mystery Card" class="showcase-product-image">
-                        <div class="showcase-product-info">
-                            <h3>🎴 Mystery Card</h3>
-                            <p>Win this to steal points from other teams!</p>
-                            <div class="showcase-product-prices">
-                                <div class="showcase-money-price">₹${product.baseMoneyPrice}</div>
-                                <div class="showcase-point-value">${product.pointValue} points</div>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    card.innerHTML = `
-                        <img src="${displayImage}" alt="${displayName}" class="showcase-product-image">
-                        <div class="showcase-product-info">
-                            <h3>${displayName}</h3>
-                            <p>${displayDesc}</p>
-                            <div class="showcase-product-prices">
-                                <div class="showcase-money-price">₹${product.baseMoneyPrice}</div>
-                                <div class="showcase-point-value">${product.pointValue} points</div>
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                showcaseProductsGrid.appendChild(card);
-            });
-        }
-        
-        function updateTeamsDisplay(teams) {
-            if (!teams) return;
-            
-            teamsLeaderboard.innerHTML = '';
-            
-            teams.forEach((team, index) => {
-                const teamItem = document.createElement('div');
-                teamItem.className = 'team-display-item';
-                
-                teamItem.innerHTML = `
-                    <div class="team-rank">#${index + 1}</div>
-                    <div class="team-info">
-                        <div class="team-name">${team.teamName}</div>
-                        <div class="team-points">${team.points} pts</div>
-                        ${team.stealCards > 0 ? `<div class="steal-cards">🎴 ${team.stealCards}</div>` : ''}
-                    </div>
-                `;
-                
-                teamsLeaderboard.appendChild(teamItem);
-            });
-        }
-        
-        function showMysteryReveal(data) {
-            const alert = document.createElement('div');
-            alert.className = 'game-alert mystery-reveal';
-            alert.innerHTML = `
-                <h2>🎁 MYSTERY REVEALED!</h2>
-                <p><strong>${data.product.name}</strong> won by <strong>${data.winnerTeam}</strong></p>
-            `;
-            document.body.appendChild(alert);
-            
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        function showStealPowerAlert(data) {
-            const alert = document.createElement('div');
-            alert.className = 'game-alert steal-power';
-            alert.innerHTML = `
-                <h2>🎴 MYSTERY CARD WON!</h2>
-                <p><strong>${data.teamName}</strong> has earned the power to steal points!</p>
-            `;
-            document.body.appendChild(alert);
-            
-            setTimeout(() => alert.remove(), 5000);
-        }
-        
-        function showPointsStolen(data) {
-            const alert = document.createElement('div');
-            alert.className = 'game-alert points-stolen';
-            alert.innerHTML = `
-                <h2>⚡ POINTS STOLEN!</h2>
-                <p><strong>${data.stealingTeam}</strong> stole <strong>${data.pointsStolen}</strong> points from <strong>${data.targetTeam}</strong>!</p>
-            `;
-            document.body.appendChild(alert);
-            
-            setTimeout(() => alert.remove(), 5000);
-        }
-    </script>
+    <script src="display.js"></script>
 </body>
 </html>

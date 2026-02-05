@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const teamSchema = new mongoose.Schema({
   teamName: { type: String, required: true, unique: true },
   points: { type: Number, required: true, default: 0 },
-  stealCards: { type: Number, default: 0 },
+  mysteryCards: { type: Number, default: 0 },
   productsWon: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   createdAt: { type: Date, default: Date.now }
 });
