@@ -1,486 +1,545 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bid Bazaar - Auction Display</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1419 100%);
-            color: #fff;
-            overflow: hidden;
-            height: 100vh;
-        }
-        
-        .display-stage {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px;
-            position: relative;
-        }
-        
-        /* Status Badge */
-        .status-badge {
-            position: absolute;
-            top: 40px;
-            right: 60px;
-            padding: 20px 50px;
-            border-radius: 50px;
-            font-size: 2rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-        }
-        
-        .status-live {
-            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
-            animation: glow-live 2s infinite;
-        }
-        
-        .status-sold {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-        }
-        
-        .status-mystery {
-            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
-            animation: glow-mystery 3s infinite;
-        }
-        
-        @keyframes glow-live {
-            0%, 100% { box-shadow: 0 10px 40px rgba(0, 212, 255, 0.6); }
-            50% { box-shadow: 0 10px 60px rgba(0, 212, 255, 0.9); }
-        }
-        
-        @keyframes glow-mystery {
-            0%, 100% { box-shadow: 0 10px 40px rgba(168, 85, 247, 0.6); }
-            50% { box-shadow: 0 10px 60px rgba(168, 85, 247, 0.9); }
-        }
-        
-        /* Main Product Display */
-        .product-stage {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 1400px;
-            width: 100%;
-            opacity: 0;
-            transform: scale(0.9);
-            animation: fadeInScale 0.8s forwards;
-        }
-        
-        @keyframes fadeInScale {
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .product-image-container {
-            margin-bottom: 50px;
-            position: relative;
-        }
-        
-        .product-image {
-            width: 600px;
-            height: 600px;
-            object-fit: cover;
-            border-radius: 30px;
-            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.7);
-            border: 4px solid rgba(255, 215, 0, 0.3);
-        }
-        
-        .mystery-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            color: #a855f7;
-            text-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
-        }
-        
-        .product-name {
-            font-size: 4.5rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 30px;
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-            line-height: 1.2;
-        }
-        
-        .product-description {
-            font-size: 1.8rem;
-            text-align: center;
-            color: #b0b0b0;
-            margin-bottom: 50px;
-            max-width: 900px;
-            line-height: 1.6;
-        }
-        
-        .product-pricing {
-            display: flex;
-            gap: 80px;
-            align-items: center;
-        }
-        
-        .price-box {
-            text-align: center;
-            padding: 30px 60px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .price-label {
-            font-size: 1.3rem;
-            color: #888;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .price-value {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #00d4ff;
-        }
-        
-        .points-value {
-            font-size: 4rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
-        }
-        
-        /* Sold Announcement */
-        .sold-announcement {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .sold-announcement.active {
-            display: flex;
-            animation: zoomIn 0.6s;
-        }
-        
-        @keyframes zoomIn {
-            from {
-                opacity: 0;
-                transform: scale(0.5);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .sold-banner {
-            font-size: 6rem;
-            font-weight: bold;
-            color: #ff6b6b;
-            margin-bottom: 50px;
-            text-shadow: 0 0 50px rgba(255, 107, 107, 0.8);
-        }
-        
-        .sold-to-label {
-            font-size: 2.5rem;
-            color: #888;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-        
-        .sold-team-name {
-            font-size: 5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 40px;
-        }
-        
-        .sold-points {
-            font-size: 4rem;
-            color: #00d4ff;
-            font-weight: bold;
-        }
-        
-        /* Preview Mode */
-        .preview-mode {
-            display: none;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            padding: 40px;
-        }
-        
-        .preview-mode.active {
-            display: flex;
-        }
-        
-        .preview-timer {
-            font-size: 3rem;
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 40px;
-            font-weight: bold;
-        }
-        
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        
-        .preview-grid::-webkit-scrollbar {
-            width: 10px;
-        }
-        
-        .preview-grid::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .preview-grid::-webkit-scrollbar-thumb {
-            background: #00d4ff;
-            border-radius: 10px;
-        }
-        
-        .preview-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s;
-        }
-        
-        .preview-card:hover {
-            transform: translateY(-10px);
-            border-color: #00d4ff;
-        }
-        
-        .preview-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .preview-card.mystery img {
-            filter: blur(15px) brightness(0.4);
-        }
-        
-        .preview-card h3 {
-            font-size: 1.5rem;
-            color: #ffd700;
-            margin-bottom: 15px;
-        }
-        
-        .preview-card.mystery h3 {
-            color: #a855f7;
-        }
-        
-        .preview-price {
-            font-size: 1.2rem;
-            color: #888;
-            margin-bottom: 10px;
-        }
-        
-        .preview-points {
-            font-size: 1.6rem;
-            color: #00d4ff;
-            font-weight: bold;
-        }
-        
-        /* Leaderboard Mode */
-        .leaderboard-mode {
-            display: none;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px;
-        }
-        
-        .leaderboard-mode.active {
-            display: flex;
-        }
-        
-        .leaderboard-title {
-            font-size: 4.5rem;
-            color: #ffd700;
-            margin-bottom: 60px;
-            text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
-        }
-        
-        .leaderboard-list {
-            width: 100%;
-            max-width: 1200px;
-        }
-        
-        .leaderboard-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 30px 50px;
-            margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            font-size: 2.2rem;
-            transition: transform 0.3s;
-        }
-        
-        .leaderboard-item:hover {
-            transform: translateX(20px);
-        }
-        
-        .leaderboard-item:first-child {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            color: #0a0e27;
-            font-size: 2.8rem;
-            border: none;
-            box-shadow: 0 10px 50px rgba(255, 215, 0, 0.5);
-        }
-        
-        .leaderboard-rank {
-            font-weight: bold;
-            margin-right: 30px;
-            color: #00d4ff;
-        }
-        
-        .leaderboard-item:first-child .leaderboard-rank {
-            color: #0a0e27;
-        }
-        
-        .leaderboard-name {
-            flex: 1;
-        }
-        
-        .leaderboard-points {
-            font-weight: bold;
-            color: #00d4ff;
-        }
-        
-        .leaderboard-item:first-child .leaderboard-points {
-            color: #0a0e27;
-        }
-        
-        /* Hidden State */
-        .hidden {
-            display: none !important;
-        }
-        
-        /* Responsive */
-        @media (max-width: 1400px) {
-            .product-image {
-                width: 500px;
-                height: 500px;
-            }
-            .product-name {
-                font-size: 3.5rem;
-            }
-        }
-        
-        @media (max-width: 1024px) {
-            .product-image {
-                width: 400px;
-                height: 400px;
-            }
-            .product-name {
-                font-size: 3rem;
-            }
-            .product-pricing {
-                gap: 40px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Screen - Bid Bazaar</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 4em;
+      color: #ffd700;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+      margin-bottom: 10px;
+    }
+
+    .header .subtitle {
+      font-size: 1.5em;
+      color: #ffed4e;
+    }
+
+    .preview-mode {
+      display: none;
+      width: 100%;
+      max-width: 1400px;
+    }
+
+    .preview-timer {
+      text-align: center;
+      font-size: 5em;
+      color: #ffd700;
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .product-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      border: 3px solid rgba(255, 215, 0, 0.3);
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover {
+      transform: scale(1.05);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .product-card h3 {
+      color: #ffd700;
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    .product-card .price {
+      font-size: 1.3em;
+      color: #4ecdc4;
+      margin: 8px 0;
+    }
+
+    .product-card .points {
+      font-size: 1.5em;
+      color: #ffed4e;
+      font-weight: bold;
+    }
+
+    .auction-mode {
+      display: none;
+      width: 100%;
+      max-width: 1200px;
+      text-align: center;
+    }
+
+    .live-badge {
+      display: inline-block;
+      background: #ff6b6b;
+      color: #fff;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 30px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .product-display {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      padding: 50px;
+      border: 4px solid #ffd700;
+    }
+
+    .product-display img {
+      width: 100%;
+      max-width: 600px;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .product-display h2 {
+      font-size: 3.5em;
+      color: #ffd700;
+      margin-bottom: 20px;
+    }
+
+    .product-display .description {
+      font-size: 1.8em;
+      color: #ddd;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .product-display .info {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+    }
+
+    .product-display .info-item {
+      text-align: center;
+    }
+
+    .product-display .info-label {
+      font-size: 1.5em;
+      color: #ffed4e;
+      margin-bottom: 10px;
+    }
+
+    .product-display .info-value {
+      font-size: 3em;
+      font-weight: bold;
+      color: #4ecdc4;
+    }
+
+    .sold-banner {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+      padding: 30px;
+      border-radius: 15px;
+      margin-top: 30px;
+      font-size: 2.5em;
+      font-weight: bold;
+      animation: slideIn 0.5s;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .leaderboard-mode {
+      display: none;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .leaderboard-title {
+      text-align: center;
+      font-size: 4em;
+      color: #ffd700;
+      margin-bottom: 40px;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+    }
+
+    .leaderboard-list {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      padding: 25px;
+      margin: 15px 0;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 15px;
+      border-left: 6px solid #ffd700;
+      transition: transform 0.3s;
+    }
+
+    .leaderboard-item:hover {
+      transform: translateX(10px);
+    }
+
+    .leaderboard-item:first-child {
+      background: rgba(255, 215, 0, 0.2);
+      border-left-color: #ffd700;
+      border-width: 8px;
+    }
+
+    .leaderboard-item:first-child .rank {
+      color: #ffd700;
+      font-size: 4em;
+    }
+
+    .leaderboard-item:first-child .team-name {
+      font-size: 3em;
+    }
+
+    .leaderboard-item:first-child .points {
+      font-size: 3.5em;
+    }
+
+    .rank {
+      font-size: 3em;
+      font-weight: bold;
+      color: #ffd700;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    .team-name {
+      flex: 1;
+      font-size: 2.5em;
+      font-weight: 600;
+      padding: 0 30px;
+    }
+
+    .points {
+      font-size: 3em;
+      font-weight: bold;
+      color: #4ecdc4;
+    }
+
+    .mystery-badge {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 1.2em;
+      margin-left: 20px;
+    }
+
+    .waiting-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .waiting-state h2 {
+      font-size: 3em;
+      color: #ffd700;
+      margin-bottom: 20px;
+    }
+
+    .waiting-state p {
+      font-size: 1.8em;
+      color: #ddd;
+    }
+
+    .spinner {
+      width: 80px;
+      height: 80px;
+      border: 8px solid rgba(255, 215, 0, 0.3);
+      border-top-color: #ffd700;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-top: 30px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <div class="display-stage">
-        <!-- Status Badge -->
-        <div id="statusBadge" class="status-badge hidden"></div>
-        
-        <!-- Live Product Display -->
-        <div id="productStage" class="product-stage hidden">
-            <div class="product-image-container">
-                <img id="productImage" class="product-image" src="" alt="">
-                <div id="mysteryOverlay" class="mystery-overlay hidden">???</div>
-            </div>
-            
-            <h1 id="productName" class="product-name"></h1>
-            <p id="productDescription" class="product-description"></p>
-            
-            <div class="product-pricing">
-                <div class="price-box">
-                    <div class="price-label">Base Price</div>
-                    <div class="price-value">₹<span id="productPrice">0</span></div>
-                </div>
-                <div class="price-box">
-                    <div class="price-label">Points</div>
-                    <div class="points-value" id="productPoints">0</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Sold Announcement -->
-        <div id="soldAnnouncement" class="sold-announcement">
-            <div class="sold-banner">✅ SOLD!</div>
-            <div class="sold-to-label">Sold To</div>
-            <div class="sold-team-name" id="soldTeamName"></div>
-            <div class="sold-points" id="soldPoints"></div>
-        </div>
-        
-        <!-- Preview Mode -->
-        <div id="previewMode" class="preview-mode">
-            <div class="preview-timer" id="previewTimer"></div>
-            <div class="preview-grid" id="previewGrid"></div>
-        </div>
-        
-        <!-- Leaderboard Mode -->
-        <div id="leaderboardMode" class="leaderboard-mode">
-            <div class="leaderboard-title">🏆 TEAM RANKINGS 🏆</div>
-            <div class="leaderboard-list" id="leaderboardList"></div>
-        </div>
+  <div class="container">
+    <div id="waitingState" class="waiting-state">
+      <h2>🎯 BID BAZAAR</h2>
+      <p>Waiting for auction to start...</p>
+      <div class="spinner"></div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="display.js"></script>
+    <div id="previewMode" class="preview-mode">
+      <div class="header">
+        <h1>🎁 PRODUCT PREVIEW</h1>
+        <div class="subtitle">Get ready for the auction!</div>
+      </div>
+      <div class="preview-timer" id="previewTimer"></div>
+      <div class="products-grid" id="previewProducts"></div>
+    </div>
+
+    <div id="auctionMode" class="auction-mode">
+      <div class="live-badge">🔴 LIVE AUCTION</div>
+      <div class="product-display" id="currentProduct"></div>
+    </div>
+
+    <div id="leaderboardMode" class="leaderboard-mode">
+      <div class="leaderboard-title">🏆 LEADERBOARD</div>
+      <div class="leaderboard-list" id="leaderboardList"></div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let currentProduct = null;
+    let allProducts = [];
+    let teams = [];
+    let previewActive = false;
+    let showLeaderboard = false;
+
+    function hideAll() {
+      document.getElementById('waitingState').style.display = 'none';
+      document.getElementById('previewMode').style.display = 'none';
+      document.getElementById('auctionMode').style.display = 'none';
+      document.getElementById('leaderboardMode').style.display = 'none';
+    }
+
+    function showWaiting() {
+      hideAll();
+      document.getElementById('waitingState').style.display = 'flex';
+    }
+
+    function showPreview() {
+      hideAll();
+      document.getElementById('previewMode').style.display = 'block';
+      renderPreview();
+    }
+
+    function showAuction() {
+      hideAll();
+      document.getElementById('auctionMode').style.display = 'block';
+      renderAuction();
+    }
+
+    function showLeaderboardView() {
+      hideAll();
+      document.getElementById('leaderboardMode').style.display = 'block';
+      renderLeaderboard();
+    }
+
+    function renderPreview() {
+      const grid = document.getElementById('previewProducts');
+      grid.innerHTML = allProducts.map(product => {
+        const isMystery = product.productType === 'mystery';
+        return `
+          <div class="product-card">
+            <img src="${isMystery ? '/uploads/mystery-box.jpg' : product.imageUrl}" alt="${product.name}">
+            <h3>${isMystery ? '??? MYSTERY ???' : product.name}</h3>
+            <div class="price">₹${product.baseMoneyPrice}</div>
+            <div class="points">${product.pointValue} Points</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAuction() {
+      if (!currentProduct) return;
+      
+      const isMystery = currentProduct.productType === 'mystery';
+      const isMysteryCard = currentProduct.productType === 'mystery-card';
+      
+      let content = `
+        <img src="${isMystery ? '/uploads/mystery-box.jpg' : currentProduct.imageUrl}" alt="${currentProduct.name}">
+        <h2>${isMystery ? '??? MYSTERY PRODUCT ???' : currentProduct.name}</h2>
+        <div class="description">${isMystery ? 'What could it be?' : currentProduct.description}</div>
+        <div class="info">
+          <div class="info-item">
+            <div class="info-label">Base Price</div>
+            <div class="info-value">₹${currentProduct.baseMoneyPrice}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Points</div>
+            <div class="info-value">${currentProduct.pointValue}</div>
+          </div>
+        </div>
+      `;
+
+      if (isMysteryCard) {
+        content += `
+          <div style="margin-top: 30px; font-size: 2em; color: #667eea;">
+            🃏 MYSTERY CARD - Special Powers Await!
+          </div>
+        `;
+      }
+
+      if (currentProduct.status === 'sold' && currentProduct.winnerTeam) {
+        content += `
+          <div class="sold-banner">
+            ✅ SOLD TO: ${currentProduct.winnerTeam}
+          </div>
+        `;
+        
+        if (isMystery) {
+          setTimeout(() => {
+            document.querySelector('.product-display img').src = currentProduct.imageUrl;
+            document.querySelector('.product-display h2').textContent = currentProduct.name;
+            document.querySelector('.product-display .description').textContent = currentProduct.description;
+          }, 2000);
+        }
+      }
+
+      document.getElementById('currentProduct').innerHTML = content;
+    }
+
+    function renderLeaderboard() {
+      const list = document.getElementById('leaderboardList');
+      list.innerHTML = teams.map((team, index) => `
+        <div class="leaderboard-item">
+          <div class="rank">#${index + 1}</div>
+          <div class="team-name">${team.teamName}</div>
+          <div class="points">${team.points} pts</div>
+          ${team.mysteryCards > 0 ? `<div class="mystery-badge">🃏 ${team.mysteryCards}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function updateDisplay() {
+      if (showLeaderboard) {
+        showLeaderboardView();
+      } else if (previewActive) {
+        showPreview();
+      } else if (currentProduct) {
+        showAuction();
+      } else {
+        showWaiting();
+      }
+    }
+
+    socket.on('initialState', (state) => {
+      previewActive = state.previewState?.isActive || false;
+      showLeaderboard = state.showLeaderboard || false;
+    });
+
+    socket.on('productsUpdate', (products) => {
+      allProducts = products;
+      currentProduct = products.find(p => p.status === 'current');
+      updateDisplay();
+    });
+
+    socket.on('teamsUpdate', (updatedTeams) => {
+      teams = updatedTeams;
+      if (showLeaderboard) {
+        renderLeaderboard();
+      }
+    });
+
+    socket.on('productLive', (product) => {
+      currentProduct = product;
+      previewActive = false;
+      showLeaderboard = false;
+      updateDisplay();
+    });
+
+    socket.on('productSold', ({ product }) => {
+      currentProduct = product;
+      updateDisplay();
+    });
+
+    socket.on('previewStarted', ({ previewState, products }) => {
+      previewActive = true;
+      allProducts = products;
+      showLeaderboard = false;
+      updateDisplay();
+    });
+
+    socket.on('previewTimerUpdate', (timer) => {
+      const timerDiv = document.getElementById('previewTimer');
+      const minutes = Math.floor(timer / 60);
+      const seconds = timer % 60;
+      timerDiv.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    });
+
+    socket.on('previewEnded', () => {
+      previewActive = false;
+      updateDisplay();
+    });
+
+    socket.on('leaderboardToggle', ({ show, teams: updatedTeams }) => {
+      showLeaderboard = show;
+      teams = updatedTeams;
+      updateDisplay();
+    });
+
+    async function loadInitialData() {
+      const [productsRes, teamsRes] = await Promise.all([
+        fetch('/api/products'),
+        fetch('/api/teams')
+      ]);
+      
+      allProducts = await productsRes.json();
+      teams = await teamsRes.json();
+      currentProduct = allProducts.find(p => p.status === 'current');
+      
+      updateDisplay();
+    }
+
+    loadInitialData();
+  </script>
 </body>
 </html>

@@ -1,122 +1,698 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bid Bazaar - Admin Control Panel</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Bid Bazaar</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #ffd700;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+      border: 2px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .section h2 {
+      color: #ffd700;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      border-bottom: 2px solid #ffd700;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #ffed4e;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 16px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin: 5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ffd700, #ffed4e);
+      color: #1a1a2e;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      color: #fff;
+    }
+
+    .btn-info {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid rgba(255, 215, 0, 0.2);
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      color: #ffd700;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      margin: 8px 0;
+      color: #ddd;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    .status-pending {
+      background: #667eea;
+    }
+
+    .status-current {
+      background: #4ecdc4;
+      animation: pulse 2s infinite;
+    }
+
+    .status-sold {
+      background: #ff6b6b;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .leaderboard {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      margin: 10px 0;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border-left: 4px solid #ffd700;
+    }
+
+    .leaderboard-item:first-child {
+      border-left-color: #ffd700;
+      background: rgba(255, 215, 0, 0.1);
+    }
+
+    .rank {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffd700;
+      min-width: 50px;
+    }
+
+    .team-name {
+      flex: 1;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .points {
+      font-size: 20px;
+      font-weight: bold;
+      color: #4ecdc4;
+    }
+
+    .preview-timer {
+      text-align: center;
+      font-size: 3em;
+      color: #ffd700;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 90%;
+      border: 2px solid #ffd700;
+    }
+
+    .modal-content h3 {
+      color: #ffd700;
+      margin-bottom: 20px;
+    }
+
+    .close-modal {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffd700;
+      cursor: pointer;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="admin-container">
-        <header class="admin-header">
-            <h1>🛠️ BID BAZAAR - ADMIN CONTROL PANEL</h1>
-        </header>
+  <div class="container">
+    <h1>🎯 BID BAZAAR - ADMIN CONTROL PANEL</h1>
 
-        <div class="admin-content">
-            <div class="admin-panels">
-                <!-- Team Management -->
-                <section class="admin-panel">
-                    <h2>👥 Team Management</h2>
-                    <div class="add-team-form">
-                        <input type="text" id="newTeamName" placeholder="Team Name">
-                        <button id="addTeamBtn">ADD TEAM</button>
-                    </div>
-                    <div id="teamsList" class="teams-list"></div>
-                </section>
-
-                <!-- Product Management -->
-                <section class="admin-panel">
-                    <h2>📦 Product Management</h2>
-                    <div class="add-product-form">
-                        <input type="text" id="productName" placeholder="Product Name">
-                        <textarea id="productDescription" placeholder="Product Description"></textarea>
-                        <input type="number" id="productBaseMoneyPrice" placeholder="Base Price (₹)" min="1">
-                        <input type="number" id="productPointValue" placeholder="Point Value" min="1">
-                        
-                        <div class="product-options">
-                            <select id="productType">
-                                <option value="normal">Normal Product</option>
-                                <option value="mystery">Mystery Product</option>
-                                <option value="mystery-card">Mystery Card 🃏</option>
-                            </select>
-                            
-                            <label>
-                                <input type="checkbox" id="isMystery"> Hide in Preview
-                            </label>
-                        </div>
-                        
-                        <input type="file" id="productImage" accept="image/*">
-                        <button id="addProductBtn">ADD PRODUCT</button>
-                    </div>
-                    <div id="productsList" class="products-list"></div>
-                </section>
-            </div>
-
-            <!-- Preview Mode Control -->
-            <section class="preview-section">
-                <h2>🛍️ Preview Mode (Before Auction)</h2>
-                <div class="preview-controls">
-                    <select id="previewDuration">
-                        <option value="60">1 minute</option>
-                        <option value="120">2 minutes</option>
-                        <option value="180">3 minutes</option>
-                        <option value="240">4 minutes</option>
-                        <option value="300">5 minutes</option>
-                    </select>
-                    <button id="startPreviewBtn">START PREVIEW</button>
-                    <div id="previewStatus">Not Active</div>
-                </div>
-            </section>
-
-            <!-- Auction Control -->
-            <section class="auction-section">
-                <h2>⚡ Auction Control</h2>
-                <div class="auction-controls">
-                    <select id="productSelect">
-                        <option value="">Select Product to Go LIVE</option>
-                    </select>
-                    <button id="setLiveBtn">SET AS LIVE</button>
-                    
-                    <div class="sold-section">
-                        <h4>Mark as Sold:</h4>
-                        <select id="winnerTeamSelect">
-                            <option value="">Select Winning Team</option>
-                        </select>
-                        <button id="markSoldBtn">MARK AS SOLD</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Mystery Card Effects -->
-            <section class="mystery-section">
-                <h2>🃏 Mystery Card Effects</h2>
-                <div class="mystery-controls">
-                    <select id="mysteryOwner">
-                        <option value="">Select Team with Mystery Card</option>
-                    </select>
-                    <select id="mysteryEffect">
-                        <option value="steal">Steal Points</option>
-                        <option value="deduct">Deduct Points</option>
-                        <option value="double">Double Last Product</option>
-                    </select>
-                    <select id="mysteryTarget">
-                        <option value="">Select Target Team</option>
-                    </select>
-                    <input type="number" id="mysteryPoints" placeholder="Points" min="1">
-                    <button id="applyEffectBtn">APPLY EFFECT</button>
-                </div>
-            </section>
-
-            <!-- Leaderboard -->
-            <section class="leaderboard-section">
-                <h2>🏆 Team Leaderboard</h2>
-                <button id="toggleLeaderboardBtn">SHOW ON DISPLAY</button>
-                <div id="leaderboardList" class="leaderboard-list"></div>
-            </section>
-        </div>
+    <!-- Preview Mode Section -->
+    <div class="section">
+      <h2>📺 Preview Mode</h2>
+      <div class="form-group">
+        <label>Preview Duration (seconds)</label>
+        <input type="number" id="previewDuration" value="120" min="10">
+      </div>
+      <button class="btn-success" onclick="startPreview()">▶️ Start Preview Mode</button>
+      <div id="previewTimer" class="preview-timer" style="display: none;"></div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="admin.js"></script>
+    <!-- Team Management Section -->
+    <div class="section">
+      <h2>👥 Team Management</h2>
+      <div class="form-group">
+        <label>Team Name</label>
+        <input type="text" id="teamName" placeholder="Enter team name">
+      </div>
+      <button class="btn-primary" onclick="addTeam()">➕ Add Team</button>
+
+      <div class="leaderboard" id="teamsList"></div>
+    </div>
+
+    <!-- Product Management Section -->
+    <div class="section">
+      <h2>🎁 Product Management</h2>
+      <div class="two-col">
+        <div class="form-group">
+          <label>Product Name</label>
+          <input type="text" id="productName" placeholder="Enter product name">
+        </div>
+        <div class="form-group">
+          <label>Product Type</label>
+          <select id="productType">
+            <option value="normal">Normal Product</option>
+            <option value="mystery">Mystery Product</option>
+            <option value="mystery-card">Mystery Card</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="productDescription" placeholder="Enter product description"></textarea>
+      </div>
+      <div class="two-col">
+        <div class="form-group">
+          <label>Base Price (₹)</label>
+          <input type="number" id="basePrice" placeholder="Enter base price" min="0">
+        </div>
+        <div class="form-group">
+          <label>Points</label>
+          <input type="number" id="pointValue" placeholder="Enter point value" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Product Image</label>
+        <input type="file" id="productImage" accept="image/*">
+      </div>
+      <button class="btn-primary" onclick="addProduct()">➕ Add Product</button>
+
+      <div class="grid" id="productsList"></div>
+    </div>
+
+    <!-- Auction Control Section -->
+    <div class="section">
+      <h2>🔨 Auction Control</h2>
+      <div class="form-group">
+        <label>Select Product to Auction</label>
+        <select id="auctionProduct"></select>
+      </div>
+      <button class="btn-success" onclick="setCurrentProduct()">🎯 Set as LIVE Product</button>
+
+      <div style="margin-top: 30px;">
+        <h3 style="color: #ffd700;">Mark Product as SOLD</h3>
+        <div class="form-group">
+          <label>Winner Team</label>
+          <select id="winnerTeam"></select>
+        </div>
+        <button class="btn-danger" onclick="markAsSold()">✅ Mark as SOLD</button>
+      </div>
+    </div>
+
+    <!-- Display Control Section -->
+    <div class="section">
+      <h2>🖥️ Display Control</h2>
+      <button class="btn-info" onclick="showLeaderboard()">📊 Show Leaderboard on Display</button>
+      <button class="btn-primary" onclick="hideLeaderboard()">🎁 Show Products on Display</button>
+    </div>
+
+    <!-- Mystery Card Actions -->
+    <div class="section">
+      <h2>🃏 Mystery Card Actions</h2>
+      <div class="form-group">
+        <label>Team with Mystery Card</label>
+        <select id="mysteryCardTeam"></select>
+      </div>
+      <div class="form-group">
+        <label>Action Type</label>
+        <select id="mysteryAction">
+          <option value="steal">Steal Points from Another Team</option>
+          <option value="deduct">Deduct Points from Another Team</option>
+          <option value="double">Double Last Product Points</option>
+        </select>
+      </div>
+      <div class="form-group" id="targetTeamGroup">
+        <label>Target Team</label>
+        <select id="targetTeam"></select>
+      </div>
+      <div class="form-group">
+        <label>Points</label>
+        <input type="number" id="mysteryPoints" placeholder="Enter points" min="0">
+      </div>
+      <button class="btn-danger" onclick="applyMysteryCard()">⚡ Apply Mystery Card</button>
+    </div>
+  </div>
+
+  <!-- Edit Product Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeEditModal()">&times;</span>
+      <h3>Edit Product</h3>
+      <input type="hidden" id="editProductId">
+      <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" id="editProductName">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="editProductDescription"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Base Price (₹)</label>
+        <input type="number" id="editBasePrice">
+      </div>
+      <div class="form-group">
+        <label>Points</label>
+        <input type="number" id="editPointValue">
+      </div>
+      <div class="form-group">
+        <label>Product Type</label>
+        <select id="editProductType">
+          <option value="normal">Normal Product</option>
+          <option value="mystery">Mystery Product</option>
+          <option value="mystery-card">Mystery Card</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>New Image (optional)</label>
+        <input type="file" id="editProductImage" accept="image/*">
+      </div>
+      <button class="btn-primary" onclick="saveProductEdit()">💾 Save Changes</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let teams = [];
+    let products = [];
+
+    async function loadData() {
+      await loadTeams();
+      await loadProducts();
+      updateDropdowns();
+    }
+
+    async function loadTeams() {
+      const res = await fetch('/api/teams');
+      teams = await res.json();
+      renderTeams();
+      updateDropdowns();
+    }
+
+    async function loadProducts() {
+      const res = await fetch('/api/products');
+      products = await res.json();
+      renderProducts();
+      updateDropdowns();
+    }
+
+    function renderTeams() {
+      const list = document.getElementById('teamsList');
+      list.innerHTML = teams.map((team, index) => `
+        <div class="leaderboard-item">
+          <span class="rank">#${index + 1}</span>
+          <span class="team-name">${team.teamName}</span>
+          <span class="points">${team.points} pts</span>
+          ${team.mysteryCards > 0 ? `<span style="color: #ffd700;">🃏 ${team.mysteryCards}</span>` : ''}
+          <button class="btn-danger" onclick="deleteTeam('${team.teamName}')">🗑️</button>
+        </div>
+      `).join('');
+    }
+
+    function renderProducts() {
+      const list = document.getElementById('productsList');
+      list.innerHTML = products.map(product => `
+        <div class="card">
+          <img src="${product.imageUrl}" alt="${product.name}">
+          <h3>${product.productType === 'mystery' ? '??? MYSTERY ???' : product.name}</h3>
+          <p>${product.productType === 'mystery' ? 'Hidden Description' : product.description}</p>
+          <p><strong>Base Price:</strong> ₹${product.baseMoneyPrice}</p>
+          <p><strong>Points:</strong> ${product.pointValue}</p>
+          <p><strong>Type:</strong> ${product.productType}</p>
+          <span class="status-badge status-${product.status}">${product.status.toUpperCase()}</span>
+          ${product.winnerTeam ? `<p><strong>Winner:</strong> ${product.winnerTeam}</p>` : ''}
+          <div style="margin-top: 10px;">
+            <button class="btn-primary" onclick="editProduct('${product._id}')">✏️ Edit</button>
+            <button class="btn-danger" onclick="deleteProduct('${product._id}')">🗑️ Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateDropdowns() {
+      const auctionSelect = document.getElementById('auctionProduct');
+      const winnerSelect = document.getElementById('winnerTeam');
+      const mysteryTeamSelect = document.getElementById('mysteryCardTeam');
+      const targetTeamSelect = document.getElementById('targetTeam');
+
+      const pendingProducts = products.filter(p => p.status === 'pending' || p.status === 'current');
+      auctionSelect.innerHTML = '<option value="">Select a product</option>' + 
+        pendingProducts.map(p => `<option value="${p._id}">${p.name}</option>`).join('');
+
+      const teamOptions = teams.map(t => `<option value="${t.teamName}">${t.teamName}</option>`).join('');
+      winnerSelect.innerHTML = '<option value="">Select winner team</option>' + teamOptions;
+      targetTeamSelect.innerHTML = '<option value="">Select target team</option>' + teamOptions;
+      
+      const teamsWithCards = teams.filter(t => t.mysteryCards > 0);
+      mysteryTeamSelect.innerHTML = '<option value="">Select team</option>' + 
+        teamsWithCards.map(t => `<option value="${t.teamName}">${t.teamName} (${t.mysteryCards} cards)</option>`).join('');
+    }
+
+    async function addTeam() {
+      const teamName = document.getElementById('teamName').value.trim();
+      if (!teamName) return alert('Please enter team name');
+
+      const res = await fetch('/api/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamName })
+      });
+
+      if (res.ok) {
+        document.getElementById('teamName').value = '';
+        loadTeams();
+      } else {
+        const error = await res.json();
+        alert(error.error);
+      }
+    }
+
+    async function deleteTeam(teamName) {
+      if (!confirm(`Delete team ${teamName}?`)) return;
+      await fetch(`/api/teams/${teamName}`, { method: 'DELETE' });
+      loadTeams();
+    }
+
+    async function addProduct() {
+      const formData = new FormData();
+      formData.append('name', document.getElementById('productName').value);
+      formData.append('description', document.getElementById('productDescription').value);
+      formData.append('baseMoneyPrice', document.getElementById('basePrice').value);
+      formData.append('pointValue', document.getElementById('pointValue').value);
+      formData.append('productType', document.getElementById('productType').value);
+      
+      const imageFile = document.getElementById('productImage').files[0];
+      if (imageFile) formData.append('image', imageFile);
+
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (res.ok) {
+        document.getElementById('productName').value = '';
+        document.getElementById('productDescription').value = '';
+        document.getElementById('basePrice').value = '';
+        document.getElementById('pointValue').value = '';
+        document.getElementById('productImage').value = '';
+        loadProducts();
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Delete this product?')) return;
+      await fetch(`/api/products/${id}`, { method: 'DELETE' });
+      loadProducts();
+    }
+
+    function editProduct(id) {
+      const product = products.find(p => p._id === id);
+      document.getElementById('editProductId').value = product._id;
+      document.getElementById('editProductName').value = product.name;
+      document.getElementById('editProductDescription').value = product.description;
+      document.getElementById('editBasePrice').value = product.baseMoneyPrice;
+      document.getElementById('editPointValue').value = product.pointValue;
+      document.getElementById('editProductType').value = product.productType;
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    async function saveProductEdit() {
+      const id = document.getElementById('editProductId').value;
+      const formData = new FormData();
+      formData.append('name', document.getElementById('editProductName').value);
+      formData.append('description', document.getElementById('editProductDescription').value);
+      formData.append('baseMoneyPrice', document.getElementById('editBasePrice').value);
+      formData.append('pointValue', document.getElementById('editPointValue').value);
+      formData.append('productType', document.getElementById('editProductType').value);
+      
+      const imageFile = document.getElementById('editProductImage').files[0];
+      if (imageFile) formData.append('image', imageFile);
+
+      await fetch(`/api/products/${id}`, {
+        method: 'PUT',
+        body: formData
+      });
+
+      closeEditModal();
+      loadProducts();
+    }
+
+    async function setCurrentProduct() {
+      const productId = document.getElementById('auctionProduct').value;
+      if (!productId) return alert('Please select a product');
+
+      await fetch(`/api/products/${productId}/live`, { method: 'POST' });
+      loadProducts();
+    }
+
+    async function markAsSold() {
+      const productId = products.find(p => p.status === 'current')?._id;
+      const winnerTeam = document.getElementById('winnerTeam').value;
+
+      if (!productId) return alert('No product is currently live');
+      if (!winnerTeam) return alert('Please select winner team');
+
+      await fetch(`/api/products/${productId}/sold`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ winnerTeam })
+      });
+
+      loadProducts();
+      loadTeams();
+    }
+
+    async function startPreview() {
+      const duration = document.getElementById('previewDuration').value;
+      await fetch('/api/preview/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ duration: parseInt(duration) })
+      });
+    }
+
+    async function showLeaderboard() {
+      await fetch('/api/display/leaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ show: true })
+      });
+    }
+
+    async function hideLeaderboard() {
+      await fetch('/api/display/leaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ show: false })
+      });
+    }
+
+    async function applyMysteryCard() {
+      const ownerTeam = document.getElementById('mysteryCardTeam').value;
+      const effect = document.getElementById('mysteryAction').value;
+      const targetTeam = document.getElementById('targetTeam').value;
+      const points = parseInt(document.getElementById('mysteryPoints').value);
+
+      if (!ownerTeam) return alert('Please select a team');
+      if ((effect === 'steal' || effect === 'deduct') && !targetTeam) return alert('Please select target team');
+      if (!points) return alert('Please enter points');
+
+      const res = await fetch('/api/mystery-effect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ownerTeam, effect, targetTeam, points })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        alert(data.message);
+        loadTeams();
+      } else {
+        const error = await res.json();
+        alert(error.error);
+      }
+    }
+
+    socket.on('teamsUpdate', () => loadTeams());
+    socket.on('productsUpdate', () => loadProducts());
+
+    socket.on('previewTimerUpdate', (timer) => {
+      const timerDiv = document.getElementById('previewTimer');
+      timerDiv.style.display = 'block';
+      const minutes = Math.floor(timer / 60);
+      const seconds = timer % 60;
+      timerDiv.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    });
+
+    socket.on('previewEnded', () => {
+      document.getElementById('previewTimer').style.display = 'none';
+    });
+
+    document.getElementById('mysteryAction').addEventListener('change', (e) => {
+      const targetGroup = document.getElementById('targetTeamGroup');
+      targetGroup.style.display = (e.target.value === 'double') ? 'none' : 'block';
+    });
+
+    loadData();
+  </script>
 </body>
 </html>

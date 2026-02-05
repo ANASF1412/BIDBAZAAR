@@ -82,15 +82,14 @@ app.get('/api/products', async (req, res) => {
 
 app.post('/api/products', upload.single('image'), async (req, res) => {
   try {
-    const { name, description, baseMoneyPrice, pointValue, isMystery, productType } = req.body;
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const { name, description, baseMoneyPrice, pointValue, productType } = req.body;
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '/uploads/mystery-box.jpg';
     
     const product = new Product({
       name,
       description,
       baseMoneyPrice: parseInt(baseMoneyPrice),
       pointValue: parseInt(pointValue),
-      isMystery: isMystery === 'true' || isMystery === true,
       productType: productType || 'normal',
       imageUrl
     });
@@ -107,14 +106,13 @@ app.post('/api/products', upload.single('image'), async (req, res) => {
 
 app.put('/api/products/:id', upload.single('image'), async (req, res) => {
   try {
-    const { name, description, baseMoneyPrice, pointValue, isMystery, productType } = req.body;
+    const { name, description, baseMoneyPrice, pointValue, productType } = req.body;
     
     const updateData = {
       name,
       description,
       baseMoneyPrice: parseInt(baseMoneyPrice),
       pointValue: parseInt(pointValue),
-      isMystery: isMystery === 'true' || isMystery === true,
       productType: productType || 'normal'
     };
     
@@ -175,7 +173,6 @@ app.post('/api/products/:id/sold', async (req, res) => {
       io.emit('mysteryCardAwarded', { teamName: winnerTeam, product });
     } else {
       team.points += product.pointValue;
-      team.productsWon.push(product._id);
       await team.save();
     }
     
@@ -215,14 +212,8 @@ app.post('/api/mystery-effect', async (req, res) => {
         await target.save();
       }
     } else if (effect === 'double') {
-      const lastProduct = owner.productsWon[owner.productsWon.length - 1];
-      if (lastProduct) {
-        const prod = await Product.findById(lastProduct);
-        if (prod) {
-          owner.points += prod.pointValue;
-          await owner.save();
-        }
-      }
+      owner.points += points;
+      await owner.save();
     }
     
     const teams = await Team.find().sort({ points: -1 });
